@@ -1,75 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>JS + CSS Clock</title>
-  <link rel="icon" href="https://fav.farm/🔥" />
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>JS + CSS Clock</title>
+    <link rel="icon" href="https://fav.farm/🔥" />
+  </head>
+  <body>
+    <section>
 
-
-    <div class="clock">
-      <div class="clock-face">
-        <div class="hand hour-hand"></div>
-        <div class="hand min-hand"></div>
-        <div class="hand second-hand"></div>
+      <div class="clock">
+        <div class="clock-face">
+          <div class="hand hour-hand"></div>
+          <div class="hand min-hand"></div>
+          <div class="hand second-hand"></div>
+        </div>
       </div>
-    </div>
 
+      <div class="digital"></div>
 
-  <style>
-    html {
-      background: #018DED url(https://unsplash.it/1500/1000?image=881&blur=5);
-      background-size: cover;
-      font-family: 'helvetica neue';
-      text-align: center;
-      font-size: 10px;
-    }
+    </section>
 
-    body {
-      margin: 0;
-      font-size: 2rem;
-      display: flex;
-      flex: 1;
-      min-height: 100vh;
-      align-items: center;
-    }
+    <style>
+      html {
+        background: #018ded url(https://unsplash.it/1500/1000?image=881&blur=5);
+        background-size: cover;
+        font-family: "helvetica neue";
+        text-align: center;
+        font-size: 10px;
+      }
 
-    .clock {
-      width: 30rem;
-      height: 30rem;
-      border: 20px solid white;
-      border-radius: 50%;
-      margin: 50px auto;
-      position: relative;
-      padding: 2rem;
-      box-shadow:
-        0 0 0 4px rgba(0,0,0,0.1),
-        inset 0 0 0 3px #EFEFEF,
-        inset 0 0 10px black,
-        0 0 10px rgba(0,0,0,0.2);
-    }
+      body {
+        margin: 0;
+        font-size: 2rem;
+        display: flex;
+        flex: 1;
+        min-height: 100vh;
+        align-items: center;
+      }
 
-    .clock-face {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      transform: translateY(-3px); /* account for the height of the clock hands */
-    }
+      section {
+        display: flex;
+        flex-direction: column;
+      }
 
-    .hand {
-      width: 50%;
-      height: 6px;
-      background: black;
-      position: absolute;
-      top: 50%;
-    }
+      .digital {
+        text-align: center;
+        font-size: 40px;
+        padding: 20px;
+        color: aliceblue;
+      }
 
-  </style>
+      .clock {
+        width: 30rem;
+        height: 30rem;
+        border: 20px solid white;
+        border-radius: 50%;
+        margin: 50px auto;
+        position: relative;
+        padding: 2rem;
+        box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1), inset 0 0 0 3px #efefef,
+          inset 0 0 10px black, 0 0 10px rgba(0, 0, 0, 0.2);
+      }
 
-  <script>
+      .clock-face {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transform: translateY(
+          -3px
+        ); /* account for the height of the clock hands */
+      }
 
+      .hand {
+        width: 50%;
+        height: 6px;
+        /* background: black; */
+        position: absolute;
+        top: 50%;
+        transform-origin: 100%; /*default is 50% which is the middle.  100% moves it to the end*/
+        transform: rotate(
+          90deg
+        ); /*rotates them 90deg so the hands start at 12o'clock*/
+        transition: all 0.05s; /*when rotate, will transition itself every second*/
+        transition-timing-function: ease-in-out;
+      }
 
-  </script>
-</body>
+      .second-hand {
+        background: yellow;
+      }
+
+      .min-hand {
+        background: seagreen;
+      }
+
+      .hour-hand {
+        background: purple;
+      }
+    </style>
+
+    <script>
+      var secondHand = document.querySelector(".second-hand");
+      var minuteHand = document.querySelector(".min-hand");
+      var hourHand = document.querySelector(".hour-hand");
+      var digital = document.querySelector(".digital");
+
+      function setDate() {
+        var now = new Date(); //'new Date()'creates a Date object, stored in variable 'now'
+
+        // start with second-hand because it moves the most
+        var seconds = now.getSeconds(); //'getSeconds()' returns the seconds(0-59)
+        //want to match the seconds with rotations.  seconds/60 = % of 360 the clock should be at. there are 60sec/round
+        //but the console.log(seconds) shows the hand isn't near the time it's supposed to show??? because of the CSS 90deg offset from before
+        var secondsDegrees = (seconds / 60) * 360 + 90; //'+90' to offset the .hand.transform:rotate(90deg) from CSS. otherwise
+        secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
+        //console.log(seconds)
+
+        //minutes:
+        var minutes = now.getMinutes();
+        var minutesDegrees = (minutes / 60) * 360 + 90; //same as above since there are also 60min/round and was also offset by the 90deg
+        minuteHand.style.transform = `rotate(${minutesDegrees}deg)`;
+        // console.log(minutes)
+
+        //hours:
+        var hours = now.getHours();
+        var hourDegrees = (hours / 12) * 360 + 90; //there are only 12hrs/round
+        hourHand.style.transform = `rotate(${hourDegrees}deg)`;
+
+        digital.textContent = `${hours} : ${minutes} : ${seconds}`;
+      }
+
+      setInterval(setDate, 1000); //run function setDate, every second
+    </script>
+  </body>
 </html>
